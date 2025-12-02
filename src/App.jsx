@@ -5,6 +5,7 @@ import WeightedMean from "./pages/WeightedMean";
 import PeakLocator from "./pages/PeakLoacator";
 import Filtering from "./pages/Filtering";
 import CurveFitting from "./pages/CurveFitting";
+import DutyCycleOpt from "./pages/DutyCycleOpt";
 import Footer from "./components/Footer/Footer";
 import './components/Header/Header.css'
 
@@ -50,6 +51,19 @@ function App() {
                 Weighted Mean
               </NavLink>
             </li>
+
+            <li style={{ marginBottom: "10px" }}>
+              <NavLink
+                to="/duty-cycle-opt"
+                style={({ isActive }) => ({
+                  color: isActive ? "#CD4A00" : "white",
+                  textDecoration: isActive ? "underline" : "none",
+                })}
+              >
+                Duty Cycle Optimization
+              </NavLink>
+            </li>
+
             <li style={{ marginBottom: "10px" }}>
               <NavLink
                 to="/peak-locator"
@@ -99,6 +113,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Overview />} />
             <Route path="/weighted-mean" element={<WeightedMean />} />
+            <Route path="/duty-cycle-opt" element={<DutyCycleOpt />} />
             <Route path="/peak-locator" element={<PeakLocator />} />
             <Route path="/filtering" element={<Filtering />}/>
             <Route path="/curve-fitting" element={<CurveFitting/>}/>
