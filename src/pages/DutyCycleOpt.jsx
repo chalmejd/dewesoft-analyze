@@ -3,7 +3,6 @@ import React, { useState } from "react";
 const API_BASE_URL = "http://localhost:5000";
 
 const DutyCycleOpt = () => {
-  const [label, setLabel] = useState("Custom Scenario");
   const [iterMin, setIterMin] = useState(1);
   const [iterMax, setIterMax] = useState(10);
 
@@ -91,7 +90,6 @@ const DutyCycleOpt = () => {
       }
 
       const body = {
-        label,
         iterMin,
         iterMax,
         wtExponents,
@@ -198,25 +196,14 @@ const DutyCycleOpt = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Duty Cycle Optimization</h1>
+      <h1 style={{fontSize: 40}}>Duty Cycle Generation</h1>
+      <hr></hr>
 
       {/* Scenario label and ITER range */}
       <div style={{ marginBottom: "20px" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Scenario Label:&nbsp;
-            <input
-              type="text"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              style={{ width: "250px" }}
-            />
-          </label>
-        </div>
-
         <div>
           <label>
-            ITER min:&nbsp;
+            Iterations min:&nbsp;
             <input
               type="number"
               value={iterMin}
@@ -227,7 +214,7 @@ const DutyCycleOpt = () => {
           </label>
           <span>&nbsp;to&nbsp;</span>
           <label>
-            ITER max:&nbsp;
+            max:&nbsp;
             <input
               type="number"
               value={iterMax}
@@ -244,8 +231,7 @@ const DutyCycleOpt = () => {
         <h2>Exponents & Design-Life Values</h2>
         <p style={{ maxWidth: "600px" }}>
           For each exponent, enter the corresponding design-life values for:
-          Total (Front + Rear), Rear, and Front. You must have at least one
-          row. The tool will handle 5 or more rows without issue.
+          Total, Rear, and Front. 
         </p>
 
         <table
@@ -536,7 +522,7 @@ const DutyCycleOpt = () => {
       {result && (
         <div>
           <h2>
-            {result.label} – Best ITER: {result.best_iter}
+            Best ITER: {result.best_iter}
           </h2>
 
           <h3>Rows (Rear, Front, Cycles)</h3>

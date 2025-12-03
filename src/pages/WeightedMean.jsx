@@ -17,7 +17,7 @@ function WeightedMean() {
     };
     return (
         <>
-            <h1 style={{fontSize: 40}}>Weighted Mean</h1>
+            <h1 style={{fontSize: 40}}>Damage Calculation</h1>
             <hr></hr>
             <div className="card">
             <FileSelector className='File Selector' onUploadComplete={handleFileUploadResponse}></FileSelector>

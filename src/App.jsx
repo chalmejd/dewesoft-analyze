@@ -2,9 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import Overview from "./pages/Overview";
 import WeightedMean from "./pages/WeightedMean";
-import PeakLocator from "./pages/PeakLoacator";
-import Filtering from "./pages/Filtering";
-import CurveFitting from "./pages/CurveFitting";
+// import PeakLocator from "./pages/PeakLoacator";
+// import Filtering from "./pages/Filtering";
+// import CurveFitting from "./pages/CurveFitting";
 import DutyCycleOpt from "./pages/DutyCycleOpt";
 import Footer from "./components/Footer/Footer";
 import './components/Header/Header.css'
@@ -27,7 +27,7 @@ function App() {
             boxSizing: "border-box",
           }}
         >
-          <h2 style={{ marginBottom: "20px" }} className="gradient-text">Dewesoft Analyze</h2>
+          <h2 style={{ marginBottom: "20px" }} className="gradient-text">TEAM Testing Toolbox</h2>
           <ul style={{ listStyle: "none", padding: 0 }}>
             <li style={{ marginBottom: "10px" }}>
               <NavLink
@@ -48,7 +48,7 @@ function App() {
                   textDecoration: isActive ? "underline" : "none",
                 })}
               >
-                Weighted Mean
+                Damage Calculation
               </NavLink>
             </li>
 
@@ -60,11 +60,11 @@ function App() {
                   textDecoration: isActive ? "underline" : "none",
                 })}
               >
-                Duty Cycle Optimization
+                Duty Cycle Generation
               </NavLink>
             </li>
 
-            <li style={{ marginBottom: "10px" }}>
+            {/* <li style={{ marginBottom: "10px" }}>
               <NavLink
                 to="/peak-locator"
                 style={({ isActive }) => ({
@@ -96,7 +96,7 @@ function App() {
               >
                 Curve Fitting
               </NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
 
@@ -114,9 +114,9 @@ function App() {
             <Route path="/" element={<Overview />} />
             <Route path="/weighted-mean" element={<WeightedMean />} />
             <Route path="/duty-cycle-opt" element={<DutyCycleOpt />} />
-            <Route path="/peak-locator" element={<PeakLocator />} />
+            {/* <Route path="/peak-locator" element={<PeakLocator />} />
             <Route path="/filtering" element={<Filtering />}/>
-            <Route path="/curve-fitting" element={<CurveFitting/>}/>
+            <Route path="/curve-fitting" element={<CurveFitting/>}/> */}
           </Routes>
         </div>
       </div>

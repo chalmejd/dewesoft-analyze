@@ -5,7 +5,7 @@ function Overview() {
   return (
     <>
     <h1 style={{fontSize: 40}}>Overview</h1>
-    <h2>Weighted Mean</h2>
+    <h2>Damage Calculation</h2>
     <hr></hr>
     
     <p>Used for calculation of equivalent load on a machine in fatigue and duty cycle analysis.</p>
@@ -37,24 +37,25 @@ function Overview() {
     </ul>
     <p><strong>Warning: Large data files can result in long processing times.</strong></p>
 
-    <h2>Peak Locator</h2>
+    <h2>Duty Cycle Generation</h2>
     <hr></hr>
     
-    <p>Used to locate the peak load on a machine during ultimate strength testing.</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus minus magni maiores illo id saepe expedita voluptate. 
-        Ea voluptatum exercitationem reiciendis, temporibus iusto obcaecati ab minima tempora quos accusamus ut!</p>
+    <p>
+    Use this tool to generate synthetic duty cycles that achieve target
+    damage levels for your components. You provide the exponents and
+    design-life values (Total, Rear, Front), along with torque and cycle
+    bounds, and the optimizer searches for a combination of torque steps
+    and cycle counts that produces damage close to 100% of design life
+    for each exponent.
+    </p>
+    <p>
+    This is useful when you want to create representative bench tests 
+    that match field damage without copying an entire field
+    history. The tool lets you adjust search parameters such as Iteration
+    range, torque limits, cycle limits, and optimization settings so you
+    can balance accuracy and runtime.
+  </p>
+  <div style={{ height: "80px" }}></div>
 </>
   );
 }
