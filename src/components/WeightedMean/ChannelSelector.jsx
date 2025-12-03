@@ -141,17 +141,36 @@ const ChannelSelector = ({ channelNames }) => {
                 <th>Exponent</th>
                 <th>Result</th>
                 <th>Cycle Count</th>
+                <th>Damage</th>
               </tr>
             </thead>
-            <tbody>
-              {results.map(([exponent, result, revCount], index) => (
-                <tr key={index}>
-                  <td>{exponent}</td>
-                  <td>{result}</td>
-                  <td>{revCount}</td>
-                </tr>
-              ))}
+                        <tbody>
+              {results.map(([exponent, result, revCount], index) => {
+                const expNum = Number(exponent);
+                const resNum = Number(result);
+                const cyclesNum = Number(revCount);
+
+                let damage = null;
+                if (
+                  Number.isFinite(expNum) &&
+                  Number.isFinite(resNum) &&
+                  Number.isFinite(cyclesNum)
+                ) {
+                  // damage = (result^exp) * cycles
+                  damage = Math.pow(resNum, expNum) * cyclesNum;
+                }
+
+                return (
+                  <tr key={index}>
+                    <td>{exponent}</td>
+                    <td>{result}</td>
+                    <td>{revCount}</td>
+                    <td>{damage !== null ? damage.toExponential(3) : "-"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
+
           </table>
         </div>
       )}
