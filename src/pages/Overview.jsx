@@ -1,5 +1,6 @@
 import React from "react";
 import Formula from "../components/WeightedMean/Formula";
+import ZeroFailureFormula from "../components/Weibull/zeroFailureFormula";
 
 function Overview() {
   return (
@@ -54,7 +55,22 @@ function Overview() {
     history. The tool lets you adjust search parameters such as Iteration
     range, torque limits, cycle limits, and optimization settings so you
     can balance accuracy and runtime.
-  </p>
+    </p>
+
+
+    <h2>Weibull Analysis</h2>
+    <hr></hr>
+    
+    <p>
+    This tool calculates zero-failure Weibull test plans based on target
+    Reliability, Confidence, Life, and shape parameter β. It computes the
+    required test duration for different sample quantities.
+    </p>
+    <ZeroFailureFormula />
+    <p>
+    Useful for planning durability or qualification tests requiring
+    zero failures to demonstrate a specified reliability level.
+    </p>
   <div style={{ height: "80px" }}></div>
 </>
   );

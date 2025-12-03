@@ -7,19 +7,22 @@ import { MathJaxContext, MathJax } from 'better-react-mathjax';
     tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]] },
   };
 
-const Formula = () => {
+const ZeroFailureFormula = () => {
   return (
     <MathJaxContext config={mathJaxConfig}>
         <p>Calculates the exponentially weighted mean of a load using the following formula:</p>
-        <MathJax>{"\\(\\overline{x}\_{ewm} = \\sqrt[k]{\\frac{1}{n}\\sum_{i=1}^n x^k_i} = \\sqrt[k]{\\frac{x^k_1+x^k_2+...+x^k_i}{n}} \\)"}</MathJax>
+        <MathJax>{"\\( T = L \\left( \\frac{\\ln(1 - C)}{Q \\, \\ln(R)} \\right)^{1/\\beta} \\)"}</MathJax>
         <p>
-          where: <br />
-          x = load <br />
-          k = exponenent <br />
-          n = cycles
-         </p>
+            where: <br />
+            T = Test Duration <br />
+            L = Target Life <br />
+            C = Confidence <br />
+            Q = Sample Quantity <br />
+            R = Reliability <br />
+            β = Weibull Shape Parameter
+        </p>
     </MathJaxContext>
   );
 };
 
-export default Formula;
+export default ZeroFailureFormula;
