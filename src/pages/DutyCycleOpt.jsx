@@ -9,14 +9,31 @@ const DutyCycleOpt = () => {
 
   // dynamic rows: [{exp, total, rear, front}, ...]
   const [rows, setRows] = useState([
-    { exp: 3.0, total: "", rear: "", front: "" }, // start with one row (exp pre-filled)
+    { exp: 3.0, total: "", rear: "", front: "" }, // start with one row
   ]);
+
+  // --- NEW: advanced parameter state ---
+  const [rearMin, setRearMin] = useState(0);
+  const [rearMax, setRearMax] = useState(4000);
+
+  const [frontMin, setFrontMin] = useState(0);
+  const [frontMax, setFrontMax] = useState(5200);
+
+  const [cycleMin, setCycleMin] = useState(0);
+  const [cycleMax, setCycleMax] = useState(1e8);
+
+  const [maxTotalCycles, setMaxTotalCycles] = useState(1e9);
+
+  const [popsize, setPopsize] = useState(15);
+  const [maxiter, setMaxiter] = useState(500);
+  const [workers, setWorkers] = useState(1); // later you can set default -1
+
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  // add a new exponent row
   const handleAddRow = () => {
     setRows((prev) => [
       ...prev,
@@ -45,7 +62,6 @@ const DutyCycleOpt = () => {
     setResult(null);
 
     try {
-      // basic validation
       if (!rows.length) {
         throw new Error("At least one exponent row is required.");
       }
@@ -80,12 +96,19 @@ const DutyCycleOpt = () => {
         iterMax,
         wtExponents,
         designLifeValues,
-        // you can expose these later if needed:
-        // rearBounds: [0, 4000],
-        // frontBounds: [0, 5200],
-        // cycleBounds: [0, 1e8],
-        // maxTotalCycles: 1e9,
+
+        // --- NEW: advanced parameters sent to backend ---
+        rearBounds: [rearMin, rearMax],
+        frontBounds: [frontMin, frontMax],
+        cycleBounds: [cycleMin, cycleMax],
+        maxTotalCycles,
+        popsize,
+        maxiter,
+        workers,
       };
+
+      // Optional: debug
+      // console.log("Sending:", JSON.stringify(body, null, 2));
 
       const resp = await fetch(`${API_BASE_URL}/optimizeDutyCycle`, {
         method: "POST",
@@ -105,6 +128,72 @@ const DutyCycleOpt = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Helper for grouped damage display
+  const renderDamageTable = () => {
+    if (!result) return null;
+
+    const numExp = result.wt_exponents.length;
+    const totals = result.damage.slice(0, numExp);
+    const rears = result.damage.slice(numExp, 2 * numExp);
+    const fronts = result.damage.slice(2 * numExp, 3 * numExp);
+
+    return (
+      <div>
+        <h3>Damage by Exponent</h3>
+        <table
+          style={{
+            borderCollapse: "collapse",
+            width: "100%",
+            maxWidth: "600px",
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={{ border: "1px solid #ccc", padding: "4px" }}>
+                Exponent
+              </th>
+              <th style={{ border: "1px solid #ccc", padding: "4px" }}>
+                Total (%)
+              </th>
+              <th style={{ border: "1px solid #ccc", padding: "4px" }}>
+                Rear (%)
+              </th>
+              <th style={{ border: "1px solid #ccc", padding: "4px" }}>
+                Front (%)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {result.wt_exponents.map((exp, i) => (
+              <tr key={i}>
+                <td
+                  style={{ border: "1px solid #ccc", padding: "4px" }}
+                >
+                  {exp}
+                </td>
+                <td
+                  style={{ border: "1px solid #ccc", padding: "4px" }}
+                >
+                  {(totals[i] * 100).toFixed(1)}
+                </td>
+                <td
+                  style={{ border: "1px solid #ccc", padding: "4px" }}
+                >
+                  {(rears[i] * 100).toFixed(1)}
+                </td>
+                <td
+                  style={{ border: "1px solid #ccc", padding: "4px" }}
+                >
+                  {(fronts[i] * 100).toFixed(1)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
@@ -264,6 +353,171 @@ const DutyCycleOpt = () => {
         </div>
       </div>
 
+      {/* --- NEW: Advanced parameters section --- */}
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={() => setShowAdvanced((s) => !s)}>
+          {showAdvanced ? "Hide Advanced Parameters" : "Show Advanced Parameters"}
+        </button>
+
+        {showAdvanced && (
+          <div
+            style={{
+              marginTop: "10px",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              maxWidth: "800px",
+            }}
+          >
+            <h2>Advanced Parameters</h2>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Torque Bounds</strong>
+              <div>
+                <label>
+                  Rear min:&nbsp;
+                  <input
+                    type="number"
+                    value={rearMin}
+                    onChange={(e) =>
+                      setRearMin(parseFloat(e.target.value))
+                    }
+                    style={{ width: "100px" }}
+                  />
+                </label>
+                <span>&nbsp;to&nbsp;</span>
+                <label>
+                  Rear max:&nbsp;
+                  <input
+                    type="number"
+                    value={rearMax}
+                    onChange={(e) =>
+                      setRearMax(parseFloat(e.target.value))
+                    }
+                    style={{ width: "100px" }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  Front min:&nbsp;
+                  <input
+                    type="number"
+                    value={frontMin}
+                    onChange={(e) =>
+                      setFrontMin(parseFloat(e.target.value))
+                    }
+                    style={{ width: "100px" }}
+                  />
+                </label>
+                <span>&nbsp;to&nbsp;</span>
+                <label>
+                  Front max:&nbsp;
+                  <input
+                    type="number"
+                    value={frontMax}
+                    onChange={(e) =>
+                      setFrontMax(parseFloat(e.target.value))
+                    }
+                    style={{ width: "100px" }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Cycle Bounds</strong>
+              <div>
+                <label>
+                  Cycles min:&nbsp;
+                  <input
+                    type="number"
+                    value={cycleMin}
+                    onChange={(e) =>
+                      setCycleMin(parseFloat(e.target.value))
+                    }
+                    style={{ width: "140px" }}
+                  />
+                </label>
+                <span>&nbsp;to&nbsp;</span>
+                <label>
+                  Cycles max:&nbsp;
+                  <input
+                    type="number"
+                    value={cycleMax}
+                    onChange={(e) =>
+                      setCycleMax(parseFloat(e.target.value))
+                    }
+                    style={{ width: "140px" }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  Max total cycles:&nbsp;
+                  <input
+                    type="number"
+                    value={maxTotalCycles}
+                    onChange={(e) =>
+                      setMaxTotalCycles(parseFloat(e.target.value))
+                    }
+                    style={{ width: "180px" }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Differential Evolution Settings</strong>
+              <div>
+                <label>
+                  Popsize:&nbsp;
+                  <input
+                    type="number"
+                    value={popsize}
+                    min={1}
+                    onChange={(e) =>
+                      setPopsize(parseInt(e.target.value || "1", 10))
+                    }
+                    style={{ width: "80px" }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  Maxiter:&nbsp;
+                  <input
+                    type="number"
+                    value={maxiter}
+                    min={1}
+                    onChange={(e) =>
+                      setMaxiter(parseInt(e.target.value || "1", 10))
+                    }
+                    style={{ width: "80px" }}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  Workers:&nbsp;
+                  <input
+                    type="number"
+                    value={workers}
+                    onChange={(e) =>
+                      setWorkers(parseInt(e.target.value || "1", 10))
+                    }
+                    style={{ width: "80px" }}
+                  />
+                  <span style={{ marginLeft: "6px", fontSize: "0.85em" }}>
+                    (1 = no parallel, -1 = all cores)
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Run button */}
       <div style={{ marginBottom: "20px" }}>
         <button onClick={handleRun} disabled={isLoading}>
@@ -337,22 +591,7 @@ const DutyCycleOpt = () => {
             </tbody>
           </table>
 
-          <h3>Damage Vector</h3>
-          <p style={{ maxWidth: "600px" }}>
-            The damage array is ordered as [Total for each exponent, Rear for
-            each exponent, Front for each exponent].
-          </p>
-          <pre
-            style={{
-              background: "#f4f4f4",
-              padding: "10px",
-              borderRadius: "4px",
-              maxWidth: "800px",
-              overflowX: "auto",
-            }}
-          >
-            {JSON.stringify(result.damage, null, 2)}
-          </pre>
+          {renderDamageTable()}
         </div>
       )}
     </div>
