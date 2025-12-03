@@ -195,7 +195,7 @@ const DutyCycleOpt = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h1 style={{fontSize: 40}}>Duty Cycle Generation</h1>
       <hr></hr>
 
