@@ -8,7 +8,10 @@ const WeibullAnalysis = () => {
 
   // range of sample quantities for the table
   const [minQty, setMinQty] = useState(1);
-  const [maxQty, setMaxQty] = useState(20);
+  const [maxQty, setMaxQty] = useState(10);
+
+  // number of allowed failures
+  const [allowedFailures, setAllowedFailures] = useState(0); // c, default 0
 
   // Precompute rows whenever inputs change
   const rows = useMemo(() => {
@@ -18,27 +21,129 @@ const WeibullAnalysis = () => {
     const C = confidencePct / 100;
 
     if (!(R > 0 && R < 1 && C > 0 && C < 1 && life > 0 && beta > 0)) {
-      return rows;
+        return rows;
     }
 
-    const lnTerm = Math.log(1 - C); // ln(1 - confidence)
-    const lnRel = Math.log(R);      // ln(reliability)
+    const betaVal = beta;
+    const lifeVal = life;
+    const c = Math.max(0, Math.floor(allowedFailures || 0));
 
-    // guard: both should be negative in typical use, but ratio must be > 0
-    for (let qty = Math.max(1, Math.floor(minQty)); qty <= maxQty; qty++) {
-      const inner = lnTerm / (qty * lnRel); // ln(1-C) / (qty * ln(R))
+    const minQ = Math.max(1, Math.floor(minQty || 1));
+    const maxQ = Math.max(minQ, Math.floor(maxQty || minQ));
 
-      if (!(inner > 0)) continue; // invalid combination → skip
+    // --- CASE 1: c = 0 → use closed-form zero failure formula (original behavior)
+    if (c === 0) {
+        const ln1C = Math.log(1 - C);      // negative
+        const lnR = Math.log(R);           // negative
 
-      const duration = life * Math.pow(inner, 1 / beta); // Life * inner^(1/beta)
+        for (let qty = minQ; qty <= maxQ; qty++) {
+        const inner = ln1C / (qty * lnR);
+        if (!(inner > 0)) continue;
 
-      if (!Number.isFinite(duration) || duration <= 0) continue;
+        const T = lifeVal * Math.pow(inner, 1 / betaVal);
+        if (Number.isFinite(T) && T > 0) {
+            rows.push({ qty, duration: T });
+        }
+        }
 
-      rows.push({ qty, duration });
+        return rows;
     }
 
-    return rows;
-  }, [reliabilityPct, confidencePct, life, beta, minQty, maxQty]);
+    // --- CASE 2: c > 0 → use binomial Weibull numeric solver
+
+      // --- CASE 2: c > 0 → use Weibull + binomial, decreasing in T
+
+  // Convert target reliability at life to Weibull scale η_target
+  const lnRneg = -Math.log(R);
+  if (!(lnRneg > 0)) return rows;
+
+  const etaTarget = lifeVal / Math.pow(lnRneg, 1 / betaVal);
+
+  const F_target = (t) => {
+    if (t <= 0) return 0;
+    const z = Math.pow(t / etaTarget, betaVal);
+    return 1 - Math.exp(-z);
+  };
+
+  const comb = (n, k) => {
+    if (k < 0 || k > n) return 0;
+    k = Math.min(k, n - k);
+    let num = 1;
+    let den = 1;
+    for (let i = 1; i <= k; i++) {
+      num *= n - (k - i);
+      den *= i;
+    }
+    return num / den;
+  };
+
+  const passProb = (n, c, F) => {
+    if (n <= 0) return 0;
+    if (F <= 0) return 1;          // no failures possible
+    if (F >= 1) return c >= n ? 1 : 0;
+
+    let p = 0;
+    for (let k = 0; k <= c; k++) {
+      p += comb(n, k) * Math.pow(F, k) * Math.pow(1 - F, n - k);
+    }
+    return p;
+  };
+
+  for (let qty = minQ; qty <= maxQ; qty++) {
+    const targetP = C;
+
+    // We know: P_pass(0) = 1, P_pass(T) ↓ as T ↑
+    const G = (T) => passProb(qty, c, F_target(T)) - targetP;
+
+    let low = 0;
+    let high = lifeVal > 0 ? lifeVal : 1;
+
+    let G_low = G(low);   // should be ≈ 1 - C > 0
+    let G_high = G(high); // we want this < 0 eventually
+
+    // Expand high until P_pass(high) <= targetP  (G_high <= 0)
+    let expand = 0;
+    while (G_high > 0 && expand < 40) {
+      high *= 2;
+      G_high = G(high);
+      expand++;
+    }
+
+    // If even after expansion P_pass is still > target, we can't find a finite T
+    if (G_high > 0 || !Number.isFinite(G_high)) {
+      continue;
+    }
+
+    // Now G_low > 0, G_high <= 0 → bisection root for G(T) = 0
+    for (let i = 0; i < 60; i++) {
+      const mid = 0.5 * (low + high);
+      const G_mid = G(mid);
+      if (G_mid > 0) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+
+    const T = 0.5 * (low + high);
+    if (Number.isFinite(T) && T > 0) {
+      rows.push({ qty, duration: T });
+    }
+  }
+
+  return rows;
+
+    }, [
+    reliabilityPct,
+    confidencePct,
+    life,
+    beta,
+    minQty,
+    maxQty,
+    allowedFailures,
+    ]);
+
+
 
   const hasInputIssue =
     !(reliabilityPct > 0 && reliabilityPct < 100) ||
@@ -48,16 +153,17 @@ const WeibullAnalysis = () => {
 
   return (
     <div>
-      <h1>Weibull Analysis</h1>
+        <h1 style={{fontSize: 40}}>Weibull Analysis</h1>
+        <hr></hr>
 
       <section style={{ marginTop: "20px", marginBottom: "20px" }}>
-        <h2>Zero Failure Test Plan</h2>
+        <h2>Weibull Test Plan</h2>
         <p style={{ maxWidth: "700px" }}>
-          This tool computes a simple zero-failure test plan for a Weibull
+          This tool computes a simple test plan for a Weibull
           life distribution. For each sample quantity, it calculates the
           test duration required to meet the specified reliability and
-          confidence targets at a given target life and shape parameter
-          (β).
+          confidence targets at a given target life, shape parameter
+          (β) and number of allowed failures.
         </p>
       </section>
 
@@ -178,9 +284,26 @@ const WeibullAnalysis = () => {
             />
         </div>
 
+        <div
+            style={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto",
+            alignItems: "center",
+            }}
+        >
+            <label style={{ textAlign: "left" }}>Allowed Failures (c):</label>
+            <input
+            type="number"
+            min={0}
+            value={allowedFailures}
+            onChange={(e) =>
+                setAllowedFailures(Math.max(0, parseInt(e.target.value || "0", 10)))
+            }
+            style={{ width: "100px", textAlign: "right" }}
+            />
+        </div>
+
         </section>
-
-
 
       {/* Warnings / issues */}
       {hasInputIssue && (

@@ -62,8 +62,9 @@ function Overview() {
     <hr></hr>
     
     <p>
-    This tool calculates zero-failure Weibull test plans based on target
-    Reliability, Confidence, Life, and shape parameter β. It computes the
+    This tool calculates Weibull test plans based on target
+    Reliability, Confidence, Life, shape parameter β, and 
+    number of allowed Failures. It computes the
     required test duration for different sample quantities.
     </p>
     <ZeroFailureFormula />
