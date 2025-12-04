@@ -50,88 +50,80 @@ const WeibullAnalysis = () => {
     }
 
     // --- CASE 2: c > 0 → use binomial Weibull numeric solver
+    // Weibull scale from reliability target
+    const lnRneg = -Math.log(R);
+    if (!(lnRneg > 0)) return rows;
 
-      // --- CASE 2: c > 0 → use Weibull + binomial, decreasing in T
+    const etaTarget = lifeVal / Math.pow(lnRneg, 1 / betaVal);
 
-  // Convert target reliability at life to Weibull scale η_target
-  const lnRneg = -Math.log(R);
-  if (!(lnRneg > 0)) return rows;
-
-  const etaTarget = lifeVal / Math.pow(lnRneg, 1 / betaVal);
-
-  const F_target = (t) => {
+    // Weibull CDF
+    const F_target = (t) => {
     if (t <= 0) return 0;
-    const z = Math.pow(t / etaTarget, betaVal);
-    return 1 - Math.exp(-z);
-  };
+    return 1 - Math.exp(-Math.pow(t / etaTarget, betaVal));
+    };
 
-  const comb = (n, k) => {
+    // Binomial PMF sum for ≤ c failures
+    const comb = (n, k) => {
     if (k < 0 || k > n) return 0;
     k = Math.min(k, n - k);
-    let num = 1;
-    let den = 1;
+    let num = 1, den = 1;
     for (let i = 1; i <= k; i++) {
-      num *= n - (k - i);
-      den *= i;
+        num *= n - (k - i);
+        den *= i;
     }
     return num / den;
-  };
+    };
 
-  const passProb = (n, c, F) => {
-    if (n <= 0) return 0;
-    if (F <= 0) return 1;          // no failures possible
+    const passProb = (n, c, F) => {
+    if (F <= 0) return 1;
     if (F >= 1) return c >= n ? 1 : 0;
 
     let p = 0;
     for (let k = 0; k <= c; k++) {
-      p += comb(n, k) * Math.pow(F, k) * Math.pow(1 - F, n - k);
+        p += comb(n, k) * Math.pow(F, k) * Math.pow(1 - F, n - k);
     }
     return p;
-  };
+    };
 
-  for (let qty = minQ; qty <= maxQ; qty++) {
-    const targetP = C;
+    for (let qty = minQ; qty <= maxQ; qty++) {
+    const targetP = 1-C;
 
-    // We know: P_pass(0) = 1, P_pass(T) ↓ as T ↑
-    const G = (T) => passProb(qty, c, F_target(T)) - targetP;
-
+    // P_pass(0) = 1, P_pass(T)->0 as T grows
     let low = 0;
-    let high = lifeVal > 0 ? lifeVal : 1;
+    let high = lifeVal;
+    let p_low = 1;                      // passProb(qty, c, F(0))
+    let p_high = passProb(qty, c, F_target(high));
 
-    let G_low = G(low);   // should be ≈ 1 - C > 0
-    let G_high = G(high); // we want this < 0 eventually
-
-    // Expand high until P_pass(high) <= targetP  (G_high <= 0)
+    // Expand high until P_pass(high) < C
     let expand = 0;
-    while (G_high > 0 && expand < 40) {
-      high *= 2;
-      G_high = G(high);
-      expand++;
+    while (p_high > targetP && expand < 40) {
+        high *= 2;
+        p_high = passProb(qty, c, F_target(high));
+        expand++;
     }
 
-    // If even after expansion P_pass is still > target, we can't find a finite T
-    if (G_high > 0 || !Number.isFinite(G_high)) {
-      continue;
-    }
+    // If still not below C, no finite T exists
+    if (p_high > targetP) continue;
 
-    // Now G_low > 0, G_high <= 0 → bisection root for G(T) = 0
+    // Now p_low > C and p_high < C → bisection
     for (let i = 0; i < 60; i++) {
-      const mid = 0.5 * (low + high);
-      const G_mid = G(mid);
-      if (G_mid > 0) {
+        const mid = 0.5 * (low + high);
+        const p_mid = passProb(qty, c, F_target(mid));
+        if (p_mid > targetP) {
         low = mid;
-      } else {
+        } else {
         high = mid;
-      }
+        }
     }
 
     const T = 0.5 * (low + high);
     if (Number.isFinite(T) && T > 0) {
-      rows.push({ qty, duration: T });
+        rows.push({ qty, duration: T });
     }
-  }
+    }
 
-  return rows;
+    return rows;
+
 
     }, [
     reliabilityPct,
