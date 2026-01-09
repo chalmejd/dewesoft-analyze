@@ -7,6 +7,7 @@ import WeightedMean from "./pages/WeightedMean";
 // import CurveFitting from "./pages/CurveFitting";
 import DutyCycleOpt from "./pages/DutyCycleOpt";
 import WeibullAnalysis from "./pages/WeibullAnalysis";
+import Coastdown from "./pages/Coastdown";
 import Footer from "./components/Footer/Footer";
 import './components/Header/Header.css'
 
@@ -77,6 +78,18 @@ function App() {
               </NavLink>
             </li>
 
+            <li style={{ marginBottom: "10px" }}>
+              <NavLink
+                to="/coastdown"
+                style={({ isActive }) => ({
+                  color: isActive ? "#CD4A00" : "white",
+                  textDecoration: isActive ? "underline" : "none",
+                })}
+              >
+                Coastdown Coefficients
+              </NavLink>
+            </li>
+
 
             {/* <li style={{ marginBottom: "10px" }}>
               <NavLink
@@ -129,6 +142,7 @@ function App() {
             <Route path="/weighted-mean" element={<WeightedMean />} />
             <Route path="/duty-cycle-opt" element={<DutyCycleOpt />} />
             <Route path="/weibull-analysis" element={<WeibullAnalysis />} />
+            <Route path="/coastdown" element={<Coastdown />} />
             {/* <Route path="/peak-locator" element={<PeakLocator />} />
             <Route path="/filtering" element={<Filtering />}/>
             <Route path="/curve-fitting" element={<CurveFitting/>}/> */}
