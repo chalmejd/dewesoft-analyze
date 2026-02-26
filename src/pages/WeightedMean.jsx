@@ -6,6 +6,7 @@ import ChannelSelector from "../components/WeightedMean/ChannelSelector";
 
 function WeightedMean() {
     const [channelNames, setChannelNames] = useState([]);
+    const [files, setFiles] = useState([]);
 
     const handleFileUploadResponse = (response) => {
       console.log("File upload response:", response);
@@ -13,6 +14,10 @@ function WeightedMean() {
         setChannelNames(response.channels);
       } else {
         alert("No channel names found in the response.");
+      }
+
+      if (response.files) {
+        setFiles(response.files);
       }
     };
     return (
@@ -23,7 +28,7 @@ function WeightedMean() {
             <FileSelector className='File Selector' onUploadComplete={handleFileUploadResponse}></FileSelector>
             </div>
             <div className='card'>
-            <ChannelSelector channelNames={channelNames} />
+            <ChannelSelector channelNames={channelNames} files={files} />
             </div>
         </>
     )}

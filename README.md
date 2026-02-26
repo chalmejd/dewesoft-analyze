@@ -15,7 +15,7 @@ $$ \overline{x}\_{ewm} = \sqrt[k]{\frac{1}{n}\sum_{i=1}^n x^k_i} = \sqrt[k]{\fra
 where:
 $x = load$, $k = exponent$, and $n = cycles$
 
-When running the program, select a .dxd file to load. This will then allow you to select a load channel and a cycle counter channel as well as list the exponents you wish to use. You can enter a list of exponents to use for the calculation as a comma separated list (i.e. 1, 2, 3, 4). Once you press submit the program will execute and return the calculate values in a table with their corresponding exponent.
+When running the program, select a .dxd file to load. A new checkbox lets you choose **bulk upload (folder)**; when enabled you can select a directory containing multiple .dxd files. The channel list is pulled from the first file and assumed to be the same across all files. You select your load and counter channels once, specify exponents (comma‑separated, e.g. `1, 2, 3, 4`), and the app will process each file in turn. Results are displayed per‑file.
 
 Common Exponents used for Equivalent life calculations
 - Bearings:
