@@ -264,7 +264,8 @@ export default function Coastdown() {
 
   return (
     <div>
-      <h1>Coastdown Coefficients</h1>
+      <h1 style={{fontSize: 40}}>Coastdown Coefficients</h1>
+      <hr />
 
       {/* Step 1 */}
       <h2>1) Upload MF4 + DBC</h2>
