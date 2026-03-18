@@ -8,6 +8,7 @@ import WeightedMean from "./pages/WeightedMean";
 import DutyCycleOpt from "./pages/DutyCycleOpt";
 import WeibullAnalysis from "./pages/WeibullAnalysis";
 import Coastdown from "./pages/Coastdown";
+import ThreeClickAngle from "./pages/ThreeClickAngle";
 import Footer from "./components/Footer/Footer";
 import './components/Header/Header.css'
 
@@ -90,6 +91,18 @@ function App() {
               </NavLink>
             </li>
 
+            <li style={{ marginBottom: "10px" }}>
+              <NavLink
+                to="/bolt-angle"
+                style={({ isActive }) => ({
+                  color: isActive ? "#CD4A00" : "white",
+                  textDecoration: isActive ? "underline" : "none",
+                })}
+              >
+                Bolt Angle Tool
+              </NavLink>
+            </li>
+
 
             {/* <li style={{ marginBottom: "10px" }}>
               <NavLink
@@ -143,6 +156,7 @@ function App() {
             <Route path="/duty-cycle-opt" element={<DutyCycleOpt />} />
             <Route path="/weibull-analysis" element={<WeibullAnalysis />} />
             <Route path="/coastdown" element={<Coastdown />} />
+            <Route path="/bolt-angle" element={<ThreeClickAngle />} />
             {/* <Route path="/peak-locator" element={<PeakLocator />} />
             <Route path="/filtering" element={<Filtering />}/>
             <Route path="/curve-fitting" element={<CurveFitting/>}/> */}
