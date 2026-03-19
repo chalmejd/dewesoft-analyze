@@ -9,6 +9,7 @@ import DutyCycleOpt from "./pages/DutyCycleOpt";
 import WeibullAnalysis from "./pages/WeibullAnalysis";
 import Coastdown from "./pages/Coastdown";
 import ThreeClickAngle from "./pages/ThreeClickAngle";
+import TestingDashboard from "./pages/TestingDashboard";
 import Footer from "./components/Footer/Footer";
 import './components/Header/Header.css'
 
@@ -103,6 +104,18 @@ function App() {
               </NavLink>
             </li>
 
+            <li style={{ marginBottom: "10px" }}>
+              <NavLink
+                to="/testing-dashboard"
+                style={({ isActive }) => ({
+                  color: isActive ? "#CD4A00" : "white",
+                  textDecoration: isActive ? "underline" : "none",
+                })}
+              >
+                Testing Dashboard
+              </NavLink>
+            </li>
+
 
             {/* <li style={{ marginBottom: "10px" }}>
               <NavLink
@@ -157,6 +170,7 @@ function App() {
             <Route path="/weibull-analysis" element={<WeibullAnalysis />} />
             <Route path="/coastdown" element={<Coastdown />} />
             <Route path="/bolt-angle" element={<ThreeClickAngle />} />
+            <Route path="/testing-dashboard" element={<TestingDashboard />} />
             {/* <Route path="/peak-locator" element={<PeakLocator />} />
             <Route path="/filtering" element={<Filtering />}/>
             <Route path="/curve-fitting" element={<CurveFitting/>}/> */}

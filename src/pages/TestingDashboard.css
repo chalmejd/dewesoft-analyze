@@ -1,0 +1,186 @@
+/* ── page ── */
+.td-page { text-align: left; }
+
+/* ── tab bar ── */
+.td-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+}
+.td-tab {
+  padding: 10px 24px;
+  background: #1a1a1a;
+  color: rgba(255,255,255,.5);
+  border: 1px solid #3a3a3a;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background .2s, color .2s;
+}
+.td-tab:hover { color: rgba(255,255,255,.75); }
+.td-tab.active {
+  background: #2a2a2a;
+  color: rgba(255,255,255,.87);
+  border-bottom: 2px solid #646cff;
+}
+
+/* ── grid ── */
+.td-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 950px) { .td-grid { grid-template-columns: 1fr; } }
+
+/* ── panel ── */
+.td-panel {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+/* ── status pill ── */
+.td-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  border: 1px solid #3a3a3a;
+  background: #1a1a1a;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.td-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.td-dot-ok { background: #5eead4; }
+.td-dot-bad { background: #ff5555; }
+
+/* ── toolbar ── */
+.td-toolbar {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.td-toolbar-2 { grid-template-columns: 1fr 1fr; }
+.td-toolbar label {
+  color: #bbb;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+.td-toolbar select {
+  width: 100%;
+  background: #1a1a1a;
+  color: rgba(255,255,255,.87);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ── info rows ── */
+.td-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: 14px;
+}
+.td-row:last-child { border-bottom: none; }
+.td-label { color: #bbb; }
+.td-value { font-weight: 700; text-align: right; }
+
+/* ── register cards ── */
+.td-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.td-card {
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  padding: 12px;
+}
+.td-card-name { color: #bbb; font-size: 13px; margin-bottom: 6px; }
+.td-card-num { font-size: 22px; font-weight: 800; }
+
+/* ── canvas ── */
+.td-canvas {
+  width: 100%;
+  height: 260px;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  display: block;
+  margin-top: 12px;
+}
+
+/* ── decoded table ── */
+.td-table-wrap { overflow: auto; margin-top: 14px; }
+.td-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.td-table th,
+.td-table td {
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 7px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+.td-table th { color: #bbb; font-weight: 600; }
+
+.td-bit-pill {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid #3a3a3a;
+  background: #1a1a1a;
+  font-size: 12px;
+}
+
+/* ── small text ── */
+.td-small { color: #888; font-size: 13px; margin-top: 6px; }
+
+/* ── section heading inside panels ── */
+.td-panel h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #bbb;
+}
+
+/* ── config panel ── */
+.td-config {
+  margin-bottom: 16px;
+}
+.td-config label {
+  color: #bbb;
+  font-size: 13px;
+  margin-right: 8px;
+}
+.td-config input[type="text"] {
+  background: #1a1a1a;
+  color: rgba(255,255,255,.87);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 14px;
+  width: 320px;
+  max-width: 100%;
+}
